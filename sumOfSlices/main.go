@@ -13,20 +13,28 @@ Problem: Concurrent Sum of Slices
 
 func main() {
 	nums := []int{1, 2, 3, 4, 5, 6}
-	chFirst := make(chan int)
-	chSecond := make(chan int)
+	//chFirst := make(chan int)
+	//chSecond := make(chan int)
+	ch := make(chan int, 2)
 
-	go sumFirstHalf(nums, chFirst)
-	go sumSecondHalf(nums, chSecond)
+	go sumPart(nums[:len(nums)/2], ch)
+	go sumPart(nums[len(nums)/2:], ch)
 
 	finalSum := 0
-	finalSum = <-chFirst + <-chSecond
+	finalSum = <-ch + <-ch
 
 	fmt.Printf("Sum of slices: %d", finalSum)
-
-	select {}
 }
 
+func sumPart(nums []int, ch chan int) {
+	sum := 0
+	for _, v := range nums {
+		sum += v
+	}
+	ch <- sum
+}
+
+/*
 func sumFirstHalf(nums []int, chFirst chan int) {
 	sum := 0
 	for i := 0; i < len(nums)/2; i++ {
@@ -37,8 +45,9 @@ func sumFirstHalf(nums []int, chFirst chan int) {
 
 func sumSecondHalf(nums []int, chSecond chan int) {
 	sum := 0
-	for i := len(nums) / 2; i < len(nums); i++ {
+	for i := len(nums)/2; i < len(nums); i++ {
 		sum += nums[i]
 	}
 	chSecond <- sum
 }
+*/
