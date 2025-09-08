@@ -18,14 +18,16 @@ func main() {
 	nums := []int{1, 2, 3, 4, 5}
 
 	var wg sync.WaitGroup
-	squaredNums := []int{}
+	squaredNums := make([]int, len(nums))
 
-	for _, v := range nums {
+	for i, v := range nums {
+		idx, val := i, v
 		wg.Go(func() {
-			squaredNums = append(squaredNums, squareNumbers(v))
+			squaredNums[idx] = squareNumbers(val)
 		})
 	}
 
+	wg.Wait()
 	fmt.Printf("Square Numbers: %v", squaredNums)
 }
 
