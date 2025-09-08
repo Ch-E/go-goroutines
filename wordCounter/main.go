@@ -29,7 +29,6 @@ func main() {
 		go func(line string) {
 			chWordCount <- wordCounter(line)
 		}(lines[i])
-
 	}
 
 	totalWords := 0
