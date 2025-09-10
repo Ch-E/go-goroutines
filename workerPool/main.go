@@ -44,10 +44,7 @@ func main() {
 		close(chResults)
 	}()
 
-	var results []int
 	for result := range chResults {
-		results = append(results, result)
+		fmt.Printf("%v ", result)
 	}
-
-	fmt.Printf("Result: %v", results)
 }
