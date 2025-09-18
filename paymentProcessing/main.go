@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"fmt"
+	"math/rand"
 	"sync"
 	"time"
 )
@@ -34,7 +36,7 @@ func main() {
 	}
 
 	var wg sync.WaitGroup
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 	chTxns := make(chan string, len(txns))
 
@@ -47,15 +49,29 @@ func main() {
 
 	for txn := range chTxns {
 		wg.Go(func() {
-			txnResponse <- processPayment()
+			txnResponse <- processPayment(ctx, txn)
 		})
 	}
 
 	go func() {
 		wg.Wait()
+		close(txnResponse)
 	}()
+
+	for rsp := range txnResponse {
+		fmt.Println(rsp)
+	}
 }
 
 func processPayment(ctx context.Context, txn string) string {
+	fmt.Printf("Processing %s\n", txn)
+	sleepDuration := time.Duration(rand.Intn(4)+1) * time.Second
+	seconds := int(sleepDuration.Seconds())
 
+	select {
+	case <-time.After(sleepDuration):
+		return fmt.Sprintf("Processed transaction %s in %d seconds", txn, seconds)
+	case <-ctx.Done():
+		return fmt.Sprintf("Transaction %s timed out after %d seconds", txn, seconds)
+	}
 }
