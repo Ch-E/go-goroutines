@@ -40,6 +40,7 @@ func main() {
 	defer cancel()
 	chTxns := make(chan string, len(txns))
 
+	// Can loop over the txns slice instead, but would require capturing loop variables
 	for _, v := range txns {
 		chTxns <- v
 	}
