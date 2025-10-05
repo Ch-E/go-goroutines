@@ -2,6 +2,7 @@ package main
 
 import (
 	"math/rand"
+	"sync"
 	"time"
 )
 
@@ -30,6 +31,7 @@ func main() {
 		"Task 5",
 	}
 
+	var wg sync.WaitGroup
 }
 
 func processTask(task string) {
