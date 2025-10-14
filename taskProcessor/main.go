@@ -32,6 +32,16 @@ func main() {
 	}
 
 	var wg sync.WaitGroup
+
+	for range 5 {
+		wg.Go(func() {
+			
+		})
+	}
+
+	go func() {
+		wg.Wait()
+	}
 }
 
 func processTask(task string) {
