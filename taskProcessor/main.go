@@ -32,10 +32,14 @@ func main() {
 	}
 
 	var wg sync.WaitGroup
+	chTasks := make(chan string, 5)
+	for range 5 {
+		chTasks <- tasks
+	}
 
 	for range 5 {
 		wg.Go(func() {
-			
+			chTasks <- processTask()
 		})
 	}
 
