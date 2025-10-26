@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"math/rand"
 	"sync"
 	"time"
@@ -32,23 +33,30 @@ func main() {
 	}
 
 	var wg sync.WaitGroup
-	chTasks := make(chan string, 5)
-	for range 5 {
-		chTasks <- tasks
-	}
+	chTasks := make(chan string, len(tasks))
 
-	for range 5 {
+	for _, v := range tasks {
+		task := v
 		wg.Go(func() {
-			chTasks <- processTask()
+			chTasks <- processTask(task)
 		})
 	}
 
 	go func() {
 		wg.Wait()
+		close(chTasks)
+	}()
+
+	for result := range chTasks {
+		fmt.Println(result)
 	}
 }
 
-func processTask(task string) {
+func processTask(task string) string {
 	randomDuration := time.Duration(rand.Intn(2000)) * time.Millisecond
 	time.Sleep(randomDuration)
+	seconds := float64(randomDuration) / float64(time.Second)
+
+	taskMsg := fmt.Sprintf("%s done after %.2f seconds", task, seconds)
+	return taskMsg
 }
