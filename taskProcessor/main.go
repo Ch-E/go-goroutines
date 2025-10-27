@@ -47,9 +47,27 @@ func main() {
 		close(chTasks)
 	}()
 
-	for result := range chTasks {
-		fmt.Println(result)
+	// Add timeout and select statement
+	timeout := time.After(3 * time.Second)
+	completed := 0
+
+	for completed < len(tasks) {
+		select {
+		case result, ok := <-chTasks:
+			if !ok {
+				return
+			}
+			fmt.Println(result)
+			completed++
+		case <-timeout:
+			fmt.Println("Not all tasks finished")
+			return
+		}
 	}
+
+	// for result := range chTasks {
+	// 	fmt.Println(result)
+	// }
 }
 
 func processTask(task string) string {
