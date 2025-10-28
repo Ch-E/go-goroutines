@@ -64,10 +64,6 @@ func main() {
 			return
 		}
 	}
-
-	// for result := range chTasks {
-	// 	fmt.Println(result)
-	// }
 }
 
 func processTask(task string) string {
