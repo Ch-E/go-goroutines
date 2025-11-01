@@ -24,7 +24,7 @@ func main() {
 	files := []string{"file1.txt", "file2.txt", "file3.txt"}
 	var wg sync.WaitGroup
 
-	chDownloads := make(chan string)
+	chDownloads := make(chan string, len(files))
 
 	for i := range files {
 		idx := i
@@ -33,12 +33,12 @@ func main() {
 		})
 	}
 
-	for v := range chDownloads {
-		fmt.Print(v)
+	for result := range chDownloads {
+		fmt.Print(result)
 	}
 	go func() {
-		close(chDownloads)
 		wg.Wait()
+		close(chDownloads)
 	}()
 }
 
