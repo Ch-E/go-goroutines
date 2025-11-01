@@ -35,7 +35,7 @@ func main() {
 }
 
 func downloadFile(file string) {
-	fmt.Println("Downloading " + file + "...")
+	fmt.Printf("Downloading %s\n", file)
 	time.Sleep(1 * time.Second)
-	fmt.Printf("Finished downloading %s\n", file)
+	fmt.Printf("%s successfully downloaded\n", file)
 }
