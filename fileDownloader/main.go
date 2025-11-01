@@ -24,18 +24,26 @@ func main() {
 	files := []string{"file1.txt", "file2.txt", "file3.txt"}
 	var wg sync.WaitGroup
 
+	chDownloads := make(chan string)
+
 	for i := range files {
 		idx := i
 		wg.Go(func() {
-			downloadFile(files[idx])
+			chDownloads <- downloadFile(files[idx])
 		})
 	}
 
-	wg.Wait()
+	for v := range chDownloads {
+		fmt.Print(v)
+	}
+	go func() {
+		close(chDownloads)
+		wg.Wait()
+	}()
 }
 
-func downloadFile(file string) {
+func downloadFile(file string) string {
 	fmt.Printf("Downloading %s\n", file)
 	time.Sleep(1 * time.Second)
-	fmt.Printf("%s successfully downloaded\n", file)
+	return fmt.Sprintf("%s successfully downloaded\n", file)
 }
